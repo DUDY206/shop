@@ -10928,3 +10928,26 @@ a.text-dark:focus {
   }
 }
 
+.card-header .card-title {
+  float: left;
+}
+
+.card-header .card-tools {
+  float: right;
+}
+
+.card-header::after {
+  display: block;
+  clear: both;
+  content: "";
+}
+
+.product img {
+  margin-top: 2rem !important;
+}
+
+.product .card-title,
+.product .card-text {
+  margin-bottom: 0 !important;
+}
+

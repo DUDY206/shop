@@ -19,8 +19,11 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-
-Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::resource('/products','ProductController');
+Route::get('/products/search/value={value}','ProductController@search');
+Route::get('/products/search/value={value}','ProductController@search');
+Route::resource('products.comments','CommentProductController');
+Route::get('comments/{cid}/replyComment','CommentProductController@showReply')->name('replyComment');
+Route::post('comments/{cid}/likeComment','LikeCommentController')->name('likeComment');

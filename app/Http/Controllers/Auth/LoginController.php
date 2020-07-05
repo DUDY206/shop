@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
+use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     /*
@@ -37,4 +37,11 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    public function authenticate(Request $request)
+    {
+        if (Auth::attempt(['phonenumber' => $request->input('phonenumber'), 'password' => $request->input('password')])) {
+            // The user is active, not suspended, and exists.
+        }
+}
 }

@@ -6,3 +6,26 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+.card-header{
+    .card-title{
+        float: left;
+    }
+    .card-tools{
+        float: right;
+    }
+}
+.card-header::after{
+    display: block;
+    clear: both;
+    content: "";
+}
+.product{
+    img{
+        margin-top:2rem!important;
+    }
+    .card-title,.card-text{
+        margin-bottom: 0!important;
+    }
+}
+
