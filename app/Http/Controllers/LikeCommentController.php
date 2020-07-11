@@ -20,5 +20,7 @@ class LikeCommentController extends Controller
 
         $totalLike = $comment->like_count;
         $totalDislike = $comment->dislike_count;
+
+
     }
 }

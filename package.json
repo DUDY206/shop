@@ -28,6 +28,7 @@
         "font-awesome": "^4.7.0",
         "laravel-vue-pagination": "^2.3.1",
         "vue-izitoast": "^1.2.1",
-        "vue-star-rating": "^1.6.1"
+        "vue-star-rating": "^1.6.1",
+        "vue-step-progress": "^0.3.3"
     }
 }

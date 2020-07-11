@@ -36,9 +36,14 @@
                         </li>
                     @endif
                 @else
+                    <li class="navbar-brand " style="margin-right: 900px">
+                        <a class=""  href="/home">
+                            <span class="navbar-badge "><strong>Home</strong></span>
+                        </a>
                     <li class="nav-item dropdown">
+
                         <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            {{ Auth::user()->name }} <span class="caret"></span>
+                            <img class="mr-3" src="{{Auth::user()->avata_src}}" alt="" style="border-radius: 50%;max-width: 20px">{{ Auth::user()->name }} <span class="caret"></span>
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -138,10 +143,16 @@
                         </div>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="/list_bill" role="button">
+                            <i class="fas fa-cart-arrow-down"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
                             <i class="fas fa-th-large"></i>
                         </a>
                     </li>
+
                 @endguest
 
             </ul>

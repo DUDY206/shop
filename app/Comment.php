@@ -7,7 +7,7 @@ use App\User;
 class Comment extends Model
 {
     protected $table = 'comments';
-    protected $fillable = ['body','reply_id','reply_type'];
+    protected $fillable = ['body','reply_id','reply_type','user_id'];
     protected $appends = ['user_name','user_avatar','created_date','like_count','dislike_count'];
     protected $hidden = ['user'];
     public function user(){

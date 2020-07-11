@@ -22,16 +22,19 @@
             <div class="text-center mt-3" v-if="nextUrl">
                 <button @click.prevent="fetchReplyComment(nextUrl)" class="btn btn-outline-secondary btn-sm">Load more comments</button>
             </div>
+            <new-answer :id="comment.id" :reply_type="'App\\Comment'" class="ml-5" v-if="this.signedIn"></new-answer>
+
         </div>
     </div>
 </template>
 
 <script>
     import ReplyComment from "./ReplyComment";
-
+    import NewAnswer from "./NewAnswer";
+    import EventBus from "../event-bus";
     export default {
         components:{
-            ReplyComment
+            ReplyComment,NewAnswer
         },
         name: "Comment",
         props:['comment'],
@@ -43,7 +46,12 @@
             }
         },
         created() {
+            EventBus.$on("create_comment_comment",comment => {
+                this.listReplyComments.unshift(comment);
+            });
+
             this.fetchReplyComment(`/comments/${this.comment.id}/replyComment`);
+
         },
         methods:{
             fetchReplyComment(endpoint){
@@ -61,30 +69,5 @@
 </script>
 
 <style scoped>
-    .card-comments img, .card-comment img {
-        height: 1.875rem;
-        width: 1.875rem;
-        float: left;
-        max-width: 30px;
-    }
-    .img-circle {
-        border-radius: 50%;
-    }
-    .card-comments, .comment-text {
-        color: #555555;
-        margin-left: 40px;
-    }
-    .card-comments, .username {
-        color: #333333;
-        display: block;
-        font-weight: 600;
-    }
-    .card-comments, .text-muted {
-        font-size: 12px;
-        font-weight: 400;
-    }
-    .comment-text{
-        padding:5px;
-        background-color: #c1c1c1;
-    }
+
 </style>

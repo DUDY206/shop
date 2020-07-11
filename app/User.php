@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password','phonenumber','avata_src'
     ];
 
     /**
@@ -65,11 +65,6 @@ class User extends Authenticatable
         }else{
             $existsRateComment->attach($comment,['rate' => $rate]);
         }
-//        if($rateComments->where('rate_id',$comment->id)->exists()){
-//            $rateComments->updateExistingPivot($comment,['rate' => $rate]);
-//        }else{
-//            $rateComments->attach($comment,['rate' => $rate]);
-//        }
     }
     public function comments(){
         return $this->hasMany(Comment::class);
@@ -81,5 +76,7 @@ class User extends Authenticatable
     public function commentComment(Comment $comment, $body){
         return $this->comments()->create(['body'=>$body,'reply_id'=>$comment->id,'reply_type'=>Comment::class]);
     }
-
+    public function bills(){
+        return $this->hasMany(Bill::class,'user_created_id','id');
+    }
 }

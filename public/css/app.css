@@ -10951,3 +10951,39 @@ a.text-dark:focus {
   margin-bottom: 0 !important;
 }
 
+.card-comments img,
+.card-comment img {
+  height: 1.875rem;
+  width: 1.875rem;
+  float: left;
+  max-width: 30px;
+}
+
+.img-circle {
+  border-radius: 50%;
+}
+
+.card-comments,
+.comment-text {
+  color: #555555;
+  margin-left: 40px;
+}
+
+.card-comments,
+.username {
+  color: #333333;
+  display: block;
+  font-weight: 600;
+}
+
+.card-comments,
+.text-muted {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.comment-text {
+  padding: 5px;
+  background-color: #c1c1c1;
+}
+

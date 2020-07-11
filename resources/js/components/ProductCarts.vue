@@ -45,25 +45,30 @@
             </table>
             <hr>
             <div class="card-body">
-                <div class="card-title"><h4>Your info:</h4></div>
-                <div class="form-group">
-                    <label >Your name</label>
-                    <input type="text"  class="form-control" placeholder="Nguyen.V.A" step="1">
-                </div>
-                <div class="form-group">
-                    <label >Phonenumber:</label>
-                    <input class="form-control" placeholder="0123.456.789" step="1" name="">
-                </div>
-                <div class="form-group">
-                    <label >Address:</label>
-                    <textarea name="" id=""  class="form-control"></textarea>
-                </div>
-                <div class="form-group">
-                    <strong class="text-danger"><i>You have to pay at least 10% for deposit.</i></strong>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Confirm and pay!!">
-                </div>
+                <form @submit.prevent="addCart">
+                    <div class="card-title"><h4>Your info:</h4></div>
+                    <div class="form-group">
+                        <label >Your name</label>
+                        <input type="text"  class="form-control" placeholder="Nguyen.V.A" step="1" required v-model="customer_name" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label >Phonenumber:</label>
+                        <input class="form-control" placeholder="0123.456.789" step="1" name="phone_number" required v-model="customer_phonenumber" >
+                    </div>
+                    <div class="form-group">
+                        <label >Address:</label>
+                        <textarea name="address" id=""  class="form-control" required v-model="customer_address" ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <strong class="text-danger"><i>You have to pay at least 10% for deposit.</i></strong>
+                    </div>
+                    <div class="form-group" v-if="signedIn">
+                        <input type="submit" value="Confirm and pay!!" :disabled="isInvalid" :class="button_class">
+                    </div>
+                    <div class="form-group" v-else>
+                        <a class="btn btn-danger">You have to login first</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -79,6 +84,11 @@
             return {
                 listProductSelected:[],
                 total:0,
+                customer_name:'',
+                customer_phonenumber:'',
+                customer_address:'',
+                customer_pay_id:'BIDV_TEST_ID_01',
+
             }
         },
         components:{
@@ -111,7 +121,26 @@
             addQuantityToProduct(product,quantity){
                 product['quantity_selected'] = quantity;
                 return product;
-            }
+            },
+            addCart(){
+                axios.post(`carts`,{
+                    'listProductSelected':this.listProductSelected,
+                    'customer_pay_id':this.customer_pay_id,
+                    'deposit':parseInt(this.total)*0.1,
+                    'sale_value':0,
+                    'user_sale_id':0,
+                    'customer_name':this.customer_name,
+                    'customer_phonenumber':this.customer_phonenumber,
+                    'customer_address':this.customer_address,
+                })
+                .catch(error=>{
+                    this.$toast.error(error.response.data.message,"Error")
+                })
+                .then(({data}) =>{
+                    this.$toast.success(data.message);
+                    this.listProductSelected = [];
+                });
+            },
         },
         computed:{
             calculate_total(){
@@ -120,6 +149,12 @@
                     this.total += p.quantity_selected*p.price_out;
                 });
                 return this.total;
+            },
+            isInvalid(){
+                return !this.signedIn || (this.customer_name === '') || (this.customer_phonenumber === '') || (this.customer_address === '') || !RegExp('[0-9]+').test(this.customer_phonenumber);
+            },
+            button_class(){
+                return this.isInvalid ? 'btn btn-outline-primary btn-sm' : 'btn btn-primary btn-sm';
             }
         }
 

@@ -14,10 +14,10 @@ class CommentProductController extends Controller
      */
     public function index($product_id)
     {
-        return Product::find($product_id)->comments()->simplePaginate(3);
+        return Product::find($product_id)->comments()->orderBy('created_at','DESC')->simplePaginate(3);
     }
     public function showReply($cid){
-        return Comment::find($cid)->replyComments()->simplePaginate(3);;
+        return Comment::find($cid)->replyComments()->orderBy('created_at','DESC')->simplePaginate(3);;
     }
     /**
      * Show the form for creating a new resource.
@@ -33,11 +33,17 @@ class CommentProductController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
-        //
+        $comment = Comment::create($request->validate(['body'=>'required'])+['reply_id'=>$request->reply_id,'reply_type'=>$request->reply_type,'user_id'=>$request->user_id]);
+        if($request->expectsJson()){
+            return response()->json([
+                'message' =>'Your answer has been submmited successfully',
+                'comment' => $comment,
+            ]);
+        }
     }
 
     /**

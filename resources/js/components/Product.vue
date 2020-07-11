@@ -22,7 +22,7 @@
                     <button class="btn-dark"
                             type="button"
                             @click="decrease" style="width: 20%">-</button>
-                    <input type="number" style="width: 60%" v-model="quantity">
+                    <input type="number" style="width: 60%" v-model="quantity" v-on:change="setProductQuanitySelected">
                     <button class="btn-dark"
                             type="button"
                             @click="increase" style="width: 20%">+</button>
@@ -57,25 +57,24 @@
                 name:this.product.name,
                 img_src:this.product.main_image,
                 quantity:100,
-                quantity_in:this.product.quantity.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."),
+                quantity_in:this.product.quantity,
                 describe:this.product.describe,
-                price_out:this.product.price_out.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."),
+                price_out:this.product.price_out,
                 size:this.product.size,
                 sharedItems: VueNumberInput.data
             }
         },
         methods:{
             addProToCart(){
+                if(this.isInvalid === false)
                 EventBus.$emit('addProToCart',this.product,this.quantity);
             },
             viewProDetail(){
                 EventBus.$emit('viewProDetail',this.product);
             },
-            isInvalid(){
-              return this.quantity<0 || this.quantity>this.quantity_in;
-            },
+
             decrease(){
-                if(!this.isInvalid()){
+                if(!this.isInvalid){
                     this.quantity=parseInt(this.quantity)-10;
                     if(this.isInvalid()){
                         this.quantity=parseInt(this.quantity)+10;
@@ -83,19 +82,35 @@
                 }
             },
             increase(){
-                if(!this.isInvalid()){
+                if(!this.isInvalid){
                     this.quantity=parseInt(this.quantity)+10;
                     if(this.isInvalid()){
                         this.quantity=parseInt(this.quantity)-10;
                     }
                 }
             },
-
+            setProductQuanitySelected(){
+                if(!this.isInvalid){
+                    this.product.quantity = parseInt(this.quantity);
+                }else{
+                    this.quantity=100;
+                    this.viewErrorQuantity();
+                }
+            },
+            viewErrorQuantity(){
+                this.$toast.error("Quantity is invalid","Error",{
+                    timeout:3000,
+                    position:'center',
+                })
+            }
         },
         computed:{
             avg_rate(){
                 return Math.ceil(this.product.avg_rate*2)/2;
-            }
+            },
+            isInvalid(){
+                return this.quantity<0 || this.quantity>this.quantity_in;
+            },
         }
     }
 </script>

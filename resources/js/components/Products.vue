@@ -29,7 +29,7 @@
                             <a class="btn btn-outline-primary" :class="(ascending === 1) ? 'bg-primary':'' " @click.prevent="changeAscending"> Ascending </a>
                             <a class="btn btn-outline-primary" :class="(ascending === -1) ? 'bg-primary':''" @click.prevent="changeAscending"> Descending </a>
                         </div>
-                        <button @click.prevent="sort">Ap dung</button>
+                        <button @click.prevent="sort" class="btn btn-primary">Ap dung</button>
                     </div>
 
 
@@ -75,7 +75,10 @@
             search(){
                 this.searchOptionIndex = 0;
                 this.ascending = 1;
-                this.fetch(`/products/search/value=${this.search_value}`);
+                if(this.search_value !== null)
+                    this.fetch(`/products/search/value=${this.search_value}`);
+                else
+                    this.fetch('products/all/show');
             },
             changeAscending(){
                 this.ascending *= -1;
@@ -105,7 +108,6 @@
                 this.listProduct = [];
                 axios.get(endpoint)
                 .then(({data}) =>{
-                    console.log(data);
                     data.forEach(
                         product => this.listProduct.push(product)
                     );

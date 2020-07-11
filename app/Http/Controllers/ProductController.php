@@ -15,7 +15,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        return Product::all();
     }
 
     /**
@@ -85,7 +85,10 @@ class ProductController extends Controller
     }
 
     public function search($value){
-        $products = Product::where('name','LIKE','%'.$value.'%')->get();
+        if($value !== '')
+            $products = Product::where('name','LIKE','%'.$value.'%')->get();
+        else
+            $products = Product::all();
         return $products;
     }
 }

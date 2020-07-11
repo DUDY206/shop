@@ -38,6 +38,7 @@
                                         @rating-selected ="setRating"
                                         v-bind:rating="avg_rate"
                                         v-bind:increment="0.5"
+                                        v-bind:readOnly="true"
                                     ></star-rating>
                                     <p>{{describe}}{{describe}}{{describe}}{{describe}}</p>
                                     <hr>
@@ -51,7 +52,7 @@
                                         <button class="btn-dark"
                                                 type="button"
                                                 @click="decrease" style="width: 20%">-</button>
-                                        <input type="number" style="width: 60%" v-model="quantity">
+                                        <input type="number" style="width: 60%" v-model="quantity" v-on:change="setProductQuanitySelected">
                                         <button class="btn-dark"
                                                 type="button"
                                                 @click="increase" style="width: 20%">+</button>
@@ -71,7 +72,7 @@
                                                 <a @click.prevent="changeView('rate')" class="nav-item nav-link" id="product-rating-tab" data-toggle="tab" href="#product-rating" role="tab" aria-controls="product-rating" aria-selected="false">Rating</a>
                                             </div>
                                         </nav>
-                                        <div class="tab-content p-3" id="nav-tabContent" style="background-color: #22ff99">
+                                        <div class="tab-content p-3" id="nav-tabContent" style="background-color: #22ff99;min-width:100%">
                                             <div class="tab-pane fade show active" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab">
                                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vitae condimentum erat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed posuere, purus at efficitur hendrerit, augue elit lacinia arcu, a eleifend sem elit et nunc. Sed rutrum vestibulum est, sit amet cursus dolor fermentum vel. Suspendisse mi nibh, congue et ante et, commodo mattis lacus. Duis varius finibus purus sed venenatis. Vivamus varius metus quam, id dapibus velit mattis eu. Praesent et semper risus. Vestibulum erat erat, condimentum at elit at, bibendum placerat orci. Nullam gravida velit mauris, in pellentesque urna pellentesque viverra. Nullam non pellentesque justo, et ultricies neque. Praesent vel metus rutrum, tempus erat a, rutrum ante. Quisque interdum efficitur nunc vitae consectetur. Suspendisse venenatis, tortor non convallis interdum, urna mi molestie eros, vel tempor justo lacus ac justo. Fusce id enim a erat fringilla sollicitudin ultrices vel metus.
                                             </div>
@@ -80,14 +81,16 @@
                                                 <div class="text-center mt-3" v-if="nextUrl">
                                                     <button @click.prevent="fetchComment(nextUrl)" class="btn btn-outline-secondary">Load more comments</button>
                                                 </div>
+                                                <new-answer :id="id" :reply_type="'App\\Product'" v-if="this.signedIn"></new-answer>
                                             </div>
                                             <div class="tab-pane fade" id="product-rating" role="tabpanel" aria-labelledby="product-rating-tab">
-                                                <star-rating
-                                                    v-if="signedIn"
-                                                    v-bind:star-size="20"
-                                                    v-bind:rating="avg_rate"
-                                                    v-bind:increment="0.5"
-                                                ></star-rating>
+                                                    <star-rating
+                                                        v-if="signedIn"
+                                                        v-bind:star-size="20"
+                                                        @rating-selected="setRateValue"
+                                                        v-bind:increment="0.5"
+                                                        v-bind:rating="getRateValue"
+                                                    ></star-rating>
                                             </div>
                                         </div>
                                     </div>
@@ -101,7 +104,6 @@
             </section>
             <footer class="modal-footer">
                 <slot name="footer">
-                    I'm the default footer!
 
                     <button
                         type="button"
@@ -121,12 +123,13 @@
     import EventBus from "../event-bus";
     import StarRating from 'vue-star-rating';
     import Comment from "./Comment";
+    import NewAnswer from "./NewAnswer";
 
     export default {
         name: "ProductDetail",
         props:['product'],
         components:{
-            StarRating,Comment
+            NewAnswer,StarRating,Comment
         },
         data(){
             return {
@@ -142,10 +145,21 @@
                 view:'description',
                 listComments:[],
                 nextUrl: null,
+                getRateValue:0,
             }
         },
         created() {
-            this.fetchComment(` products/${this.product.id}/comments`);
+            this.fetchComment(`products/${this.product.id}/comments`);
+            axios.get(`products/${this.id}/rate`)
+            .then(response => {
+                this.getRateValue = response.data;
+            });
+            EventBus.$on("create_comment_product",comment => {
+                this.listComments.unshift(comment);
+            });
+            EventBus.$on("rating-selected",(value)=>{
+                console.log(value);
+            })
         },
         methods:{
             close() {
@@ -184,6 +198,33 @@
                 .then(({data}) =>{
                     this.listComments.push(...data.data);
                     this.nextUrl = data.next_page_url;
+                })
+            },
+            setRateValue(value){
+                console.log('catch event');
+                this.getRateValue = value;
+                axios.post(`products/${this.id}/rate`,{
+                    'rate_value' : value,
+                })
+                .catch(error=>{
+                    this.$toast.error(error.response.data.message,"Error")
+                })
+                .then(({data}) => {
+                    this.$toast.success(data.message,"Success");
+                })
+            },
+            setProductQuanitySelected(){
+                if(!this.isInvalid()){
+                    this.product.quantity = parseInt(this.quantity);
+                }else{
+                    this.quantity=100;
+                    this.viewErrorQuantity();
+                }
+            },
+            viewErrorQuantity(){
+                this.$toast.error("Quantity is invalid","Error",{
+                    timeout:3000,
+                    position:'center',
                 })
             }
         },

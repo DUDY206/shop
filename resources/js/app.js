@@ -11,7 +11,8 @@ import Vue from 'vue';
 import VueIziToast from 'vue-izitoast';
 import 'izitoast/dist/css/iziToast.css';
 import Authorize from "../assets/authorization/authorize";
-
+import StepProgress from 'vue-step-progress';
+import 'vue-step-progress/dist/main.css';
 Vue.use(VueIziToast);
 
 Vue.use(Authorize);
@@ -28,7 +29,7 @@ Vue.use(Authorize);
 
 Vue.component('landing-page', require('./components/LandingPage.vue').default);
 Vue.component('pagination', require('laravel-vue-pagination'));
-
+Vue.component('step-progress',require('vue-step-progress').default)
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
